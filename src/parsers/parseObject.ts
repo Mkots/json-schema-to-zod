@@ -47,8 +47,18 @@ export function parseObject(
     }
   }
 
-  const additionalProperties =
-    objectSchema.additionalProperties !== undefined
+  // Add emty object handler
+  const isAdditionalPropertiesNotEmpty =
+    typeof objectSchema.additionalProperties === "object" &&
+    !Array.isArray(objectSchema.additionalProperties) &&
+    "not" in objectSchema.additionalProperties &&
+    typeof objectSchema.additionalProperties.not === "object" &&
+    !Array.isArray(objectSchema.additionalProperties.not) &&
+    Object.keys(objectSchema.additionalProperties.not).length === 0;
+
+  const additionalProperties = isAdditionalPropertiesNotEmpty
+    ? "z.never()"
+    : objectSchema.additionalProperties !== undefined
       ? parseSchema(objectSchema.additionalProperties, {
           ...refs,
           path: [...refs.path, "additionalProperties"],

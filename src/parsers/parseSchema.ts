@@ -101,6 +101,8 @@ const addAnnotations = (schema: JsonSchemaObject, parsed: string): string => {
 const selectParser: ParserSelector = (schema, refs) => {
   if (its.a.nullable(schema)) {
     return parseNullable(schema, refs);
+  } else if (its.a.simpleDiscriminatedOneOf(schema)) {
+    return parseSimpleDiscriminatedOneOf(schema, refs);
   } else if (its.an.object(schema)) {
     return parseObject(schema, refs);
   } else if (its.an.array(schema)) {
@@ -109,8 +111,6 @@ const selectParser: ParserSelector = (schema, refs) => {
     return parseAnyOf(schema, refs);
   } else if (its.an.allOf(schema)) {
     return parseAllOf(schema, refs);
-  } else if (its.a.simpleDiscriminatedOneOf(schema)) {
-    return parseSimpleDiscriminatedOneOf(schema, refs);
   } else if (its.a.oneOf(schema)) {
     return parseOneOf(schema, refs);
   } else if (its.a.not(schema)) {
