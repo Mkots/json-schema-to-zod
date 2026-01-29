@@ -47,8 +47,18 @@ export function parseObject(
     }
   }
 
-  const additionalProperties =
-    objectSchema.additionalProperties !== undefined
+  // Add emty object handler
+  const isAdditionalPropertiesNotEmpty =
+    typeof objectSchema.additionalProperties === "object" &&
+    !Array.isArray(objectSchema.additionalProperties) &&
+    "not" in objectSchema.additionalProperties &&
+    typeof objectSchema.additionalProperties.not === "object" &&
+    !Array.isArray(objectSchema.additionalProperties.not) &&
+    Object.keys(objectSchema.additionalProperties.not).length === 0;
+
+  const additionalProperties = isAdditionalPropertiesNotEmpty
+    ? "z.never()"
+    : objectSchema.additionalProperties !== undefined
       ? parseSchema(objectSchema.additionalProperties, {
           ...refs,
           path: [...refs.path, "additionalProperties"],
@@ -89,16 +99,16 @@ export function parseObject(
       }
     } else {
       if (additionalProperties) {
-        patternProperties += `z.record(z.union([${[
+        patternProperties += `z.record(z.string(), z.union([${[
           ...Object.values(parsedPatternProperties),
           additionalProperties,
         ].join(", ")}]))`;
       } else if (Object.keys(parsedPatternProperties).length > 1) {
-        patternProperties += `z.record(z.union([${Object.values(
+        patternProperties += `z.record(z.string(), z.union([${Object.values(
           parsedPatternProperties,
         ).join(", ")}]))`;
       } else {
-        patternProperties += `z.record(${Object.values(
+        patternProperties += `z.record(z.string(), ${Object.values(
           parsedPatternProperties,
         )})`;
       }
@@ -133,7 +143,7 @@ export function parseObject(
       patternProperties += "if (!result.success) {\n";
 
       patternProperties += `ctx.addIssue({
-          path: [...ctx.path, key],
+          path: [key],
           code: 'custom',
           message: \`Invalid input: Key matching regex /\${key}/ must match schema\`,
           params: {
@@ -152,7 +162,7 @@ export function parseObject(
       patternProperties += "if (!result.success) {\n";
 
       patternProperties += `ctx.addIssue({
-          path: [...ctx.path, key],
+          path: [key],
           code: 'custom',
           message: \`Invalid input: must match catchall schema\`,
           params: {
@@ -178,8 +188,8 @@ export function parseObject(
     : patternProperties
       ? patternProperties
       : additionalProperties
-        ? `z.record(${additionalProperties})`
-        : "z.record(z.any())";
+        ? `z.record(z.string(), ${additionalProperties})`
+        : "z.record(z.string(), z.any())";
 
   if (its.an.anyOf(objectSchema)) {
     output += `.and(${parseAnyOf(
