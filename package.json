@@ -1,6 +1,6 @@
 {
-  "name": "json-schema-to-zod",
-  "version": "2.7.1",
+  "name": "@mkots/json-schema-to-zod",
+  "version": "2.7.2",
   "description": "Converts JSON schema objects or files into Zod schemas",
   "types": "./dist/types/index.d.ts",
   "bin": "./dist/cjs/cli.js",
@@ -36,7 +36,13 @@
       "test"
     ]
   },
-  "keywords": ["zod", "json", "schema", "converter", "cli"],
+  "keywords": [
+    "zod",
+    "json",
+    "schema",
+    "converter",
+    "cli"
+  ],
   "author": "Stefan Terdell",
   "contributors": [
     "Chen (https://github.com/werifu)",
@@ -54,12 +60,13 @@
     "Adrian Ordonez (https://github.com/adrianord)",
     "Jonas Reucher (https://github.com/Mantls)",
     "Nicolas Forstner (https://github.com/nlsfnr)",
-    "Jordyn https://github.com/ColourfulMelon"
+    "Jordyn https://github.com/ColourfulMelon",
+    "Mkots https://github.com/Mkots"
   ],
   "license": "ISC",
   "repository": {
     "type": "git",
-    "url": "https://github.com/StefanTerdell/json-schema-to-zod"
+    "url": "https://github.com/Mkots/json-schema-to-zod"
   },
   "devDependencies": {
     "@types/json-schema": "^7.0.15",
